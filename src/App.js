@@ -11,6 +11,9 @@ import EditUser from "./features/users/EditUser";
 import NewNote from "./features/notes/NewNote";
 import EditNote from "./features/notes/EditNote";
 import Prefetch from "./features/auth/Prefetch";
+import PersistLogin from "./features/auth/PersistLogin";
+import { ROLES } from "./config/roles";
+import RequireAuth from "./features/auth/RequireAuth";
 
 function App() {
   return (
@@ -18,37 +21,47 @@ function App() {
       {/* Parent element for whole webpage which is rendering every child element */}
       {/* This <Layout /> component ain't displaying any of the content. it is just rendering every child element */}
       <Route path="/" element={<Layout />}>
+        {/* Public Routes */}
         {/* A user come to this / directory this will be displayed */}
         <Route index element={<Public />} />
 
         {/* Only showing this <Login /> component when it is required */}
         <Route path="login" element={<Login />} />
 
-        <Route element={<Prefetch />}>
-          
-          {/* Protected spefic area for each user */}
-          <Route path="dash" element={<DashLayout />}>
-            {/* index page of /dash */}
-            <Route index element={<Welcome />} />
+        {/* Protected Routes */}
+        <Route element={<PersistLogin />}>
+          <Route
+            element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}
+          >
+            <Route element={<Prefetch />}>
+              {/* Protected spefic area for each user */}
+              <Route path="dash" element={<DashLayout />}>
+                {/* index page of /dash */}
+                <Route index element={<Welcome />} />
 
-            {/* Notes directory  */}
-            {/* contains pages for NotesList, NewNote, EditNote, etc. */}
-            <Route path="notes">
-              <Route index element={<NotesList />} />
+                {/* Notes directory  */}
+                {/* contains pages for NotesList, NewNote, EditNote, etc. */}
 
-              <Route path=":id" element={<EditNote />} />
+                <Route path="notes">
+                  <Route index element={<NotesList />} />
 
-              <Route path="new" element={<NewNote />} />
-            </Route>
+                  <Route path=":id" element={<EditNote />} />
 
-            {/* Users directory */}
-            {/*  */}
-            <Route path="users">
-              <Route index element={<UsersList />} />
+                  <Route path="new" element={<NewNote />} />
+                </Route>
 
-              <Route path=":id" element={<EditUser />} />
+                {/* Users directory */}
+                {/*  */}
+                <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Manager]} />}>
+                  <Route path="users">
+                    <Route index element={<UsersList />} />
 
-              <Route path="new" element={<NewUserForm />} />
+                    <Route path=":id" element={<EditUser />} />
+
+                    <Route path="new" element={<NewUserForm />} />
+                  </Route>
+                </Route>
+              </Route>
             </Route>
           </Route>
         </Route>

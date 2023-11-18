@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useUpdateNoteMutation, useDeleteNoteMutation } from "./notesApiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import useAuth from '../../hooks/useAuth';
 
 const EditNoteForm = ({users,note}) => {
+
+  const { isAdmin, isManager} = useAuth();
 
   const [updateNote, {
       isLoading,
@@ -63,6 +66,18 @@ const EditNoteForm = ({users,note}) => {
     );
   });
 
+let deleteButton = null;
+if (isAdmin || isManager) {
+  deleteButton = (
+    <button
+      className="icon-button"
+      title="delete"
+      onClick={onNoteDeleteClicked}
+    >
+      <FontAwesomeIcon icon={faTrashCan} />
+    </button>
+  );
+}
 
   const errClass = (isError || isDelError) ? "errmsg" : "offscreen"
   const validTitleClass = !title ? "form__input--incomplete" : ''
@@ -89,13 +104,9 @@ const EditNoteForm = ({users,note}) => {
               <FontAwesomeIcon icon={faSave} />
             </button>
 
-            <button
-              className="icon-button"
-              title="delete"
-              onClick={onNoteDeleteClicked}
-            >
-              <FontAwesomeIcon icon={faTrashCan} />
-            </button>
+            {/* Delete button won't be displayed to employees. only for Admin & Managers */}
+            {deleteButton}
+
           </div>
         </div>
 
