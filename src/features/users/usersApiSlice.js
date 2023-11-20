@@ -12,12 +12,14 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         getUsers : builder.query({
 
             // where should the front end look at in backend mapping to get users data
-            query : () => '/users',
+            query : () => ({
+                
+            url : '/users',
 
             // if there is no error return the success status 200
             validateStatus : (response, result) => {
                 return response.status === 200 && !result.isError
-            },
+            }}),
 
             // The keepUnusedDataFor attribute in Redux Toolkit’s RTK Query is used to manage the cache behavior of data. When data is fetched from the server, RTK Query will store the data in the Redux store as a ‘cache’. If no components have asked to read that data when the timer expires, it will remove the data from the cache
             // keepUnusedDataFor : 5,

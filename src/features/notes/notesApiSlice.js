@@ -13,12 +13,16 @@ export const notesApiSlice = apiSlice.injectEndpoints({
     // Query to get All notes
     getNotes: builder.query({
       // where should the front end look at in backend mapping to get notes data
-      query: () => "/notes",
+      query: () => ({
 
-      // if there is no error return the success status 200
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
+        url : "/notes",
+
+        // if there is no error return the success status 200
+        // if there is some unexpected error it will go throgh this
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        }
+      }),
 
       // keepUnusedDataFor: 5,
 
